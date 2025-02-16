@@ -1,107 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Profile</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 2rem;
-        }
-        header img {
-            width: 150px;
-            border-radius: 50%;
-            margin-bottom: 1rem;
-        }
-        section {
-            padding: 2rem;
-            margin: 1rem auto;
-            max-width: 800px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        ul li {
-            background: #e4e4e9;
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            border-radius: 4px;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Github, Linkedin, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-    <!-- Header Section -->
-    <header>
-        <img src="https://avatars.githubusercontent.com/u/your-username" alt="Profile Picture">
-        <h1>Your Name</h1>
-        <p>GitHub Enthusiast | Software Developer | Open Source Contributor</p>
-    </header>
+const Profile = () => {
+    const [projects, setProjects] = useState([]);
 
-    <!-- About Section -->
-    <section>
-        <h2>About Me</h2>
-        <p>Hello! I'm a passionate software developer specializing in web and mobile applications. I love contributing to open-source projects and learning new technologies.</p>
-    </section>
+    useEffect(() => {
+        fetch('https://api.github.com/users/your-username/repos')
+            .then(res => res.json())
+            .then(data => setProjects(data.slice(0, 6)))
+            .catch(err => console.error(err));
+    }, []);
 
-    <!-- Skills Section -->
-    <section>
-        <h2>Skills</h2>
-        <ul>
-            <li>JavaScript (React, Node.js)</li>
-            <li>Python (Django, Flask)</li>
-            <li>Cloud (AWS, Docker, CI/CD)</li>
-            <li>Database (MySQL, MongoDB)</li>
-        </ul>
-    </section>
+    return (
+        <div className="min-h-screen bg-gray-100 p-4">
+            <div className="text-center my-8">
+                <motion.img 
+                    src="https://avatars.githubusercontent.com/u/your-username" 
+                    alt="Profile" 
+                    className="w-32 h-32 rounded-full mx-auto shadow-lg"
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                />
+                <h1 className="text-3xl font-bold mt-4">Your Name</h1>
+                <p className="text-gray-600">Full Stack Developer | Open Source Enthusiast</p>
+                <div className="flex justify-center gap-4 mt-4">
+                    <a href="https://github.com/your-username" target="_blank"><Github size={24} /></a>
+                    <a href="https://linkedin.com/in/your-username" target="_blank"><Linkedin size={24} /></a>
+                    <a href="mailto:your.email@example.com"><Mail size={24} /></a>
+                </div>
+            </div>
 
-    <!-- Projects Section -->
-    <section>
-        <h2>Projects</h2>
-        <ul>
-            <li>
-                <a href="https://github.com/your-username/project-1" target="_blank">Project 1</a> - Description of the project.
-            </li>
-            <li>
-                <a href="https://github.com/your-username/project-2" target="_blank">Project 2</a> - Description of the project.
-            </li>
-            <li>
-                <a href="https.com/your-username/project-3" target="_blank">Project 3</a> - Description of the project.
-            </li>
-        </ul>
-    </section>
+            <div className="max-w-4xl mx-auto">
+                <h2 className="text-2xl font-bold mb-4">Projects</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {projects.map(project => (
+                        <Card key={project.id} className="hover:shadow-xl transition-shadow">
+                            <CardContent>
+                                <h3 className="font-bold text-lg">{project.name}</h3>
+                                <p className="text-gray-600 mb-2">{project.description}</p>
+                                <Button variant="link" as="a" href={project.html_url} target="_blank">
+                                    View on GitHub
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
 
-    <!-- Contact Section -->
-    <section>
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
-        <p>GitHub: <a href="https://github.com/your-username" target="_blank">github.com/your-username</a></p>
-        <p>LinkedIn: <a href="https://linkedin.com/in/your-username" target="_blank">linkedin.com/in/your-username</a></p>
-    </section>
-
-</body>
-</html>
+export default Profile;
